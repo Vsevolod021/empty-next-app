@@ -2,21 +2,46 @@
 
 import api, { cookiesOptions, responseTypes, jsonHeaders, REFRESH_MAX_AGE } from '@/store/api';
 import { dateDifference } from '@/utils/helpers';
+import { redirect } from 'next/navigation';
 import { apiEndpoint } from '@/config';
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
+import { jwtDecode } from 'jwt-decode';
 import qs from 'qs';
+
+// authorization
 
 export async function setAuthorization(tokens) {
   api.setLastRefreshDate(new Date());
 
   if (tokens) {
-    await setCookies('tokens', tokens, cookiesOptions).then(() => console.log('ОЛ ИЗИ ФОР ИКТИЗИ'));
+    await setCookies('tokens', tokens, cookiesOptions);
     return;
   }
 
-  await deleteCookies().then(() => console.log('ОЛ ИЗИ ФОР ИКТИЗИ'));
+  await deleteCookies();
 }
+
+export async function checkAccessToken() {
+  const error = new Error('Ошибка при обновлении токена авторизации');
+
+  const tokens = await getCookies();
+
+  if (!tokens) {
+    return await logOut();
+  }
+
+  const tokenData = jwtDecode(tokens.access);
+  const tokenExpirationDate = new Date(tokenData.exp * 1000);
+  const timeToTokenExporation = tokenExpirationDate.getTime() - new Date().getTime();
+
+  if (timeToTokenExporation <= 0) {
+    return await api.sessionExpired(false);
+  }
+
+  return await api.refreshAccessToken();
+}
+
+// fetch
 
 export async function fetchData(url, params, responseType = responseTypes.JSON) {
   const isFormData = params.body instanceof FormData;
@@ -97,19 +122,12 @@ export async function createUrlWithQueryParams(apiUrl, params = {}) {
   return url;
 }
 
-export async function logIn(data) {
-  const url = await createUrlWithQueryParams('/auth/');
-  const result = await POST(url, data);
-
-  await setAuthorization(result).then(() => redirect('/profile'));
-
-  return await 'authorizovan';
-}
+// cookies
 
 export async function setCookies(name, value, options = cookiesOptions) {
   const cookiesStorage = await cookies();
 
-  return cookiesStorage.set({ name, value: JSON.stringify(value), ...options });
+  return await cookiesStorage.set({ name, value: JSON.stringify(value), ...options });
 }
 
 export async function getCookies() {
@@ -128,11 +146,22 @@ export async function deleteCookies() {
   return cookiesStorage.delete('tokens');
 }
 
+// profile
+
 export async function getProfileInfo() {
   const url = await createUrlWithQueryParams('/profile/');
   return await GET(url);
 }
 
+export async function logIn(data) {
+  const url = await createUrlWithQueryParams('/auth/');
+  const result = await POST(url, data);
+
+  await setAuthorization(result).then(() => redirect('/profile'));
+
+  return await 'authorizovan';
+}
+
 export async function logOut() {
-  await setAuthorization(null);
+  await setAuthorization(null).then(() => redirect('/logout'));
 }

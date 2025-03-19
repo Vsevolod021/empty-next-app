@@ -1,9 +1,8 @@
 import 'server-only';
 
-import { getCookies, setAuthorization } from '@/api/api';
+import { getCookies, setAuthorization, createUrlWithQueryParams } from '@/api/api';
 import { redirect } from 'next/navigation';
 import { makeAutoObservable } from 'mobx';
-import { jwtDecode } from 'jwt-decode';
 
 const sec = 1000;
 const min = sec * 60;
@@ -37,40 +36,22 @@ class Api {
     makeAutoObservable(this);
   }
 
-  get tokens() {
-    return getCookies();
-  }
-
   setLastRefreshDate(date) {
     this.lastRefreshDate = date;
     return this.lastRefreshDate;
   }
 
-  async checkAccessToken() {
-    const error = new Error('Ошибка при обновлении токена авторизации');
-
-    if (!this.tokens) throw error;
-
-    const tokenData = jwtDecode(this.tokens.access);
-    const tokenExpirationDate = new Date(tokenData.exp * 1000);
-    const timeToTokenExporation = tokenExpirationDate.getTime() - new Date().getTime();
-
-    if (timeToTokenExporation <= 0) {
-      return this.sessionExpired(false);
-    }
-
-    return await this.refreshAccessToken();
-  }
-
   async refreshAccessToken() {
     const error = new Error('Ошибка при обновлении токена авторизации');
 
-    if (!this.tokens) throw error;
+    const tokens = await getCookies();
+
+    if (!tokens) throw error;
 
     const headers = new Headers(jsonHeaders);
-    const body = JSON.stringify({ refresh: this.tokens.refresh });
+    const body = JSON.stringify({ refresh: tokens.refresh });
     const request = { body, headers, method: 'POST', redirect: 'follow' };
-    const url = this.createUrlWithQueryParams('/token/refresh/');
+    const url = await createUrlWithQueryParams('/auth/refresh_token/');
 
     const response = await fetch(url, request);
 
@@ -80,7 +61,7 @@ class Api {
 
     if (!result.access) throw error;
 
-    setAuthorization({ access: result.access, refresh: this.tokens.refresh });
+    await setAuthorization({ access: result.access, refresh: tokens.refresh });
   }
 
   async sessionExpired(doRedirect = false) {

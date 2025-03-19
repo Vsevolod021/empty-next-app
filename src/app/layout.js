@@ -2,8 +2,13 @@
 
 import Link from 'next/link';
 
+import { checkAccessToken } from '@/api/api';
+import { useEffect } from 'react';
+
 export default function RootLayout({ children }) {
-  // checkAccessToken();
+  useEffect(() => {
+    checkAccessToken();
+  }, []);
 
   return (
     <html lang="en">
