@@ -5,7 +5,6 @@ import { dateDifference } from '@/utils/helpers';
 import { redirect } from 'next/navigation';
 import { apiEndpoint } from '@/config';
 import { cookies } from 'next/headers';
-import { jwtDecode } from 'jwt-decode';
 import qs from 'qs';
 
 // authorization
@@ -22,23 +21,11 @@ export async function setAuthorization(tokens) {
 }
 
 export async function checkAccessToken() {
-  const error = new Error('Ошибка при обновлении токена авторизации');
-
-  const tokens = await getCookies();
-
-  if (!tokens) {
+  try {
+    return await api.checkAccessToken();
+  } catch (err) {
     return await logOut();
   }
-
-  const tokenData = jwtDecode(tokens.access);
-  const tokenExpirationDate = new Date(tokenData.exp * 1000);
-  const timeToTokenExporation = tokenExpirationDate.getTime() - new Date().getTime();
-
-  if (timeToTokenExporation <= 0) {
-    return await api.sessionExpired(false);
-  }
-
-  return await api.refreshAccessToken();
 }
 
 // fetch
@@ -49,7 +36,8 @@ export async function fetchData(url, params, responseType = responseTypes.JSON) 
   const headers = new Headers(isFormData ? {} : jsonHeaders);
   const body = isFormData ? params.body : JSON.stringify(params.body);
 
-  const authorization = 'Bearer ' + (await getCookies())?.access;
+  const cookiesData = await getCookies();
+  const authorization = cookiesData?.access;
 
   if (authorization) {
     const timeFromLastRefresh = dateDifference(api.lastRefreshDate);
@@ -58,7 +46,7 @@ export async function fetchData(url, params, responseType = responseTypes.JSON) 
       await api.refreshAccessToken();
     }
 
-    headers.append('Authorization', authorization);
+    headers.append('Authorization', `Bearer ${authorization}`);
   }
 
   const timeoutDuration = params.method.toUpperCase() === 'GET' ? 30000 : 180000;

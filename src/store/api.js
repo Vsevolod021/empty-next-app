@@ -3,11 +3,12 @@ import 'server-only';
 import { getCookies, setAuthorization, createUrlWithQueryParams } from '@/api/api';
 import { redirect } from 'next/navigation';
 import { makeAutoObservable } from 'mobx';
+import { jwtDecode } from 'jwt-decode';
 
 const sec = 1000;
 const min = sec * 60;
 
-export const TOKEN_MAX_AGE = 30 * min;
+export const TOKEN_MAX_AGE = (30 * min) / sec;
 export const REFRESH_MAX_AGE = 25 * min;
 
 export const cookiesOptions = {
@@ -72,6 +73,26 @@ class Api {
     }
 
     throw new Error(errorText);
+  }
+
+  async checkAccessToken() {
+    const error = new Error('Ошибка при обновлении токена авторизации');
+
+    const tokens = await getCookies();
+
+    if (!tokens) {
+      return await logOut();
+    }
+
+    const tokenData = jwtDecode(tokens.access);
+    const tokenExpirationDate = new Date(tokenData.exp * 1000);
+    const timeToTokenExporation = tokenExpirationDate.getTime() - new Date().getTime();
+
+    if (timeToTokenExporation <= 0) {
+      return await this.sessionExpired(false);
+    }
+
+    return await this.refreshAccessToken();
   }
 }
 
