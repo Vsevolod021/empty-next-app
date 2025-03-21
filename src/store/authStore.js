@@ -1,8 +1,9 @@
 import 'server-only';
 
-import { getCookies, setAuthorization, createUrlWithQueryParams } from '@/api/api';
+import { createUrlWithQueryParams } from '@/api/api';
+import { setAuthorization } from '@/actions/auth';
+import { getCookies } from '@/actions/cookies';
 import { redirect } from 'next/navigation';
-import { makeAutoObservable } from 'mobx';
 import { jwtDecode } from 'jwt-decode';
 
 const sec = 1000;
@@ -30,12 +31,8 @@ export const jsonHeaders = {
   'Content-Type': 'application/json'
 };
 
-class Api {
+class AuthStore {
   lastRefreshDate = new Date();
-
-  constructor() {
-    makeAutoObservable(this);
-  }
 
   setLastRefreshDate(date) {
     this.lastRefreshDate = date;
@@ -66,22 +63,18 @@ class Api {
   }
 
   async sessionExpired(doRedirect = false) {
-    const errorText = 'Время сессии истекло';
-
     if (doRedirect) {
       redirect('/logout');
     }
 
-    throw new Error(errorText);
+    throw new Error('Время сессии истекло');
   }
 
   async checkAccessToken() {
-    const error = new Error('Ошибка при обновлении токена авторизации');
-
     const tokens = await getCookies();
 
     if (!tokens) {
-      return await logOut();
+      throw new Error('Ошибка при обновлении токена авторизации');
     }
 
     const tokenData = jwtDecode(tokens.access);
@@ -96,4 +89,4 @@ class Api {
   }
 }
 
-export default new Api();
+export default new AuthStore();

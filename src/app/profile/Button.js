@@ -1,13 +1,8 @@
 'use client';
 
-import { logOut, checkAccessToken } from '@/api/api';
-import { useEffect } from 'react';
+import { logOut } from '@/actions/auth';
 
 const Button = () => {
-  useEffect(() => {
-    checkAccessToken();
-  }, []);
-
   return <button onClick={logOut}>Log out</button>;
 };
 

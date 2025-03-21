@@ -9,25 +9,6 @@ const compat = new FlatCompat({
   baseDirectory: __dirname
 });
 
-const eslintConfig = [
-  ...compat.extends('next/core-web-vitals'),
-  {
-    rules: {
-      'eslint@next/next/no-img-element': 'off',
-      'jsx-quotes': ['error', 'prefer-double'],
-      'no-unused-vars': 'off',
-      'prettier/prettier': [
-        'error',
-        {
-          printWidth: 100,
-          trailingComma: 'none',
-          singleQuote: true,
-          endOfLine: 'auto',
-          semi: true
-        }
-      ]
-    }
-  }
-];
+const eslintConfig = [compat.extends('next/core-web-vitals')];
 
 export default eslintConfig;

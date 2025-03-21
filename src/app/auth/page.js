@@ -1,36 +1,27 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { observer } from 'mobx-react-lite';
-import { logIn } from '@/api/api';
+import { logIn } from '@/actions/auth';
 import { useState } from 'react';
 
-const Form = observer(() => {
-  const router = useRouter();
-
+const Page = observer(() => {
   const [form, setForm] = useState({ username: '', password: '' });
 
   const onFormChange = (field, value) => {
     setForm({ ...form, [field]: value });
   };
 
-  const onFormSubmit = async (event) => {
-    event.preventDefault();
-
-    await logIn({ ...form });
-  };
-
   return (
-    <form onSubmit={onFormSubmit}>
+    <form action={logIn}>
       <input
-        type="username"
+        type="text"
         name="username"
         placeholder="username"
         onChange={(e) => onFormChange(e.target.name, e.target.value)}
         value={form.username}
       />
       <input
-        type="text"
+        type="password"
         name="password"
         placeholder="password"
         onChange={(e) => onFormChange(e.target.name, e.target.value)}
@@ -41,4 +32,4 @@ const Form = observer(() => {
   );
 });
 
-export default Form;
+export default Page;

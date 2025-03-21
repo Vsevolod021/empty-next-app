@@ -1,9 +1,8 @@
 'use server';
 
-import { getProfileInfo } from '@/api/api';
+import { getProfileInfo } from '@/actions/auth';
 
 import Button from './Button';
-import api from '@/store/api';
 
 async function Page() {
   const profile = await getProfileInfo();

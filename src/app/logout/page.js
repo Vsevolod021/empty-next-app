@@ -3,9 +3,7 @@
 import { redirect } from 'next/navigation';
 
 async function Page() {
-  redirect('/auth');
-
-  return <div>logout</div>;
+  return redirect('/auth');
 }
 
 export default Page;

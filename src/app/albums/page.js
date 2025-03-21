@@ -1,13 +1,7 @@
-import { getCookies } from '@/api/api';
-import Form from '@/components/form';
-import { cookies } from 'next/headers';
+'use server';
 
-async function Page({ ...props }) {
-  // const cookiesStorage = await cookies();
-
+export async function Page() {
   return <div>albums</div>;
 }
 
 export default Page;
-
-export const revalidate = 3600;

@@ -1,34 +1,10 @@
 'use server';
 
-import api, { cookiesOptions, responseTypes, jsonHeaders, REFRESH_MAX_AGE } from '@/store/api';
+import authStore, { responseTypes, jsonHeaders, REFRESH_MAX_AGE } from '@/store/authStore';
 import { dateDifference } from '@/utils/helpers';
-import { redirect } from 'next/navigation';
+import { getCookies } from '@/actions/cookies';
 import { apiEndpoint } from '@/config';
-import { cookies } from 'next/headers';
 import qs from 'qs';
-
-// authorization
-
-export async function setAuthorization(tokens) {
-  api.setLastRefreshDate(new Date());
-
-  if (tokens) {
-    await setCookies('tokens', tokens, cookiesOptions);
-    return;
-  }
-
-  await deleteCookies();
-}
-
-export async function checkAccessToken() {
-  try {
-    return await api.checkAccessToken();
-  } catch (err) {
-    return await logOut();
-  }
-}
-
-// fetch
 
 export async function fetchData(url, params, responseType = responseTypes.JSON) {
   const isFormData = params.body instanceof FormData;
@@ -40,10 +16,10 @@ export async function fetchData(url, params, responseType = responseTypes.JSON) 
   const authorization = cookiesData?.access;
 
   if (authorization) {
-    const timeFromLastRefresh = dateDifference(api.lastRefreshDate);
+    const timeFromLastRefresh = dateDifference(authStore.lastRefreshDate);
 
     if (timeFromLastRefresh >= REFRESH_MAX_AGE) {
-      await api.refreshAccessToken();
+      await authStore.refreshAccessToken();
     }
 
     headers.append('Authorization', `Bearer ${authorization}`);
@@ -58,7 +34,7 @@ export async function fetchData(url, params, responseType = responseTypes.JSON) 
 
     if (response.status === 401) {
       if (!url.pathname.includes('/auth')) {
-        return api.sessionExpired(true);
+        return authStore.sessionExpired(true);
       }
     }
 
@@ -108,48 +84,4 @@ export async function createUrlWithQueryParams(apiUrl, params = {}) {
   url.search = qs.stringify(params);
 
   return url;
-}
-
-// cookies
-
-export async function setCookies(name, value, options = cookiesOptions) {
-  const cookiesStorage = await cookies();
-
-  return await cookiesStorage.set({ name, value: JSON.stringify(value), ...options });
-}
-
-export async function getCookies() {
-  const cookiesStorage = await cookies();
-
-  try {
-    return await JSON.parse(cookiesStorage.get('tokens')?.value);
-  } catch {
-    return '';
-  }
-}
-
-export async function deleteCookies() {
-  const cookiesStorage = await cookies();
-
-  return cookiesStorage.delete('tokens');
-}
-
-// profile
-
-export async function getProfileInfo() {
-  const url = await createUrlWithQueryParams('/profile/');
-  return await GET(url);
-}
-
-export async function logIn(data) {
-  const url = await createUrlWithQueryParams('/auth/');
-  const result = await POST(url, data);
-
-  await setAuthorization(result).then(() => redirect('/profile'));
-
-  return await 'authorizovan';
-}
-
-export async function logOut() {
-  await setAuthorization(null).then(() => redirect('/logout'));
 }

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 
-import { checkAccessToken } from '@/api/api';
+import { checkAccessToken } from '@/actions/auth';
 import { useEffect } from 'react';
 
 export default function RootLayout({ children }) {
@@ -13,13 +13,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        {
-          <div style={{ display: 'flex', gap: '20px', marginBottom: '15px' }}>
-            <Link href="/profile">profile</Link>
-            <Link href="/albums">albums</Link>
-            <Link href="/auth">auth</Link>
-          </div>
-        }
+        <div style={{ display: 'flex', gap: '20px', marginBottom: '15px' }}>
+          <Link href="/profile">profile</Link>
+          <Link href="/albums">albums</Link>
+          <Link href="/auth">auth</Link>
+        </div>
+
         {children}
       </body>
     </html>
