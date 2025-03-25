@@ -15,7 +15,7 @@ export async function getCookies() {
   try {
     return await JSON.parse(cookiesStorage.get('tokens')?.value);
   } catch {
-    return '';
+    return null;
   }
 }
 
