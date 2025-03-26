@@ -62,10 +62,10 @@ async function checkAccessToken() {
   const timeToTokenExporation = tokenExpirationDate.getTime() - new Date().getTime();
 
   if (timeToTokenExporation <= 0) {
-    return await this.sessionExpired(false);
+    return await sessionExpired(false);
   }
 
-  return await this.refreshAccessToken();
+  return await refreshAccessToken();
 }
 
 // profile

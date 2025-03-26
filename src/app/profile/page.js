@@ -1,27 +1,26 @@
 'use server';
 
 import { getProfileInfo } from '@/actions/auth';
-
 import Button from './Button';
 
 async function Page() {
   const profile = await getProfileInfo();
 
   return (
-    <div>
-      <h2>profile</h2>
-      <p>
+    <div className="profile-page">
+      <h1>profile</h1>
+      <h3>
         <b>Имя: </b>
         <span>{profile.name}</span>
-      </p>
-      <p>
+      </h3>
+      <h3>
         <b>Фамилия: </b>
         <span>{profile.surname}</span>
-      </p>
-      <p>
+      </h3>
+      <h3>
         <b>Отчество: </b>
         <span>{profile.patronymic}</span>
-      </p>
+      </h3>
       <Button>Logout</Button>
     </div>
   );

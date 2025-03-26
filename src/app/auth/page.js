@@ -12,23 +12,25 @@ const Page = observer(() => {
   };
 
   return (
-    <form action={logIn}>
-      <input
-        type="text"
-        name="username"
-        placeholder="username"
-        onChange={(e) => onFormChange(e.target.name, e.target.value)}
-        value={form.username}
-      />
-      <input
-        type="password"
-        name="password"
-        placeholder="password"
-        onChange={(e) => onFormChange(e.target.name, e.target.value)}
-        value={form.password}
-      />
-      <button type="submit">Log in</button>
-    </form>
+    <div className="auth-page">
+      <form action={logIn}>
+        <input
+          type="text"
+          name="username"
+          placeholder="username"
+          onChange={(e) => onFormChange(e.target.name, e.target.value)}
+          value={form.username}
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="password"
+          onChange={(e) => onFormChange(e.target.name, e.target.value)}
+          value={form.password}
+        />
+        <button type="submit">Log in</button>
+      </form>
+    </div>
   );
 });
 

@@ -1,9 +1,12 @@
 'use client';
 
-import Link from 'next/link';
-
 import { checkAuthorized } from '@/actions/auth';
 import { useEffect } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+
+import logo from '@/assets/favicon.ico';
+import '@/assets/index.sass';
 
 export default function RootLayout({ children }) {
   useEffect(() => {
@@ -13,9 +16,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <div style={{ display: 'flex', gap: '20px', marginBottom: '15px' }}>
+        <div className="header">
+          <Link href="/" className="logo">
+            <Image src={logo} alt="logo" width={40} height={40} />
+          </Link>
           <Link href="/profile">profile</Link>
-          <Link href="/albums">albums</Link>
+          <Link href="/groups">groups</Link>
           <Link href="/auth">auth</Link>
         </div>
 
