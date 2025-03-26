@@ -2,12 +2,12 @@
 
 import Link from 'next/link';
 
-import { checkAccessToken } from '@/actions/auth';
+import { checkAuthorized } from '@/actions/auth';
 import { useEffect } from 'react';
 
 export default function RootLayout({ children }) {
   useEffect(() => {
-    checkAccessToken();
+    checkAuthorized();
   }, []);
 
   return (

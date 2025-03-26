@@ -1,6 +1,7 @@
 'use server';
 
-import authStore, { responseTypes, jsonHeaders, REFRESH_MAX_AGE } from '@/store/authStore';
+import authStore, { responseTypes, jsonHeaders, REFRESH_MAX_AGE } from '@/store/auth';
+import { refreshAccessToken, sessionExpired } from '@/actions/auth';
 import { dateDifference } from '@/utils/helpers';
 import { getCookies } from '@/actions/cookies';
 import { apiEndpoint } from '@/config';
@@ -19,7 +20,7 @@ export async function fetchData(url, params, responseType = responseTypes.JSON) 
     const timeFromLastRefresh = dateDifference(authStore.lastRefreshDate);
 
     if (timeFromLastRefresh >= REFRESH_MAX_AGE) {
-      await authStore.refreshAccessToken();
+      await refreshAccessToken();
     }
 
     headers.append('Authorization', `Bearer ${authorization}`);
@@ -34,7 +35,7 @@ export async function fetchData(url, params, responseType = responseTypes.JSON) 
 
     if (response.status === 401) {
       if (!url.pathname.includes('/auth')) {
-        return authStore.sessionExpired(true);
+        return sessionExpired(true);
       }
     }
 
