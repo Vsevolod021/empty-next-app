@@ -14,6 +14,11 @@ const compat = new FlatCompat({
 const eslintConfig = [
   ...compat.extends('next/core-web-vitals'),
   {
+    languageOptions: {
+      globals: {
+        es6: true
+      }
+    },
     rules: {
       'init-declarations': ['warn', 'always'],
       'no-undef': 'error',
