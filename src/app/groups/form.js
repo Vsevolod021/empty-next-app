@@ -2,31 +2,31 @@
 
 import { useRouter } from 'next/navigation';
 import { observer } from 'mobx-react-lite';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const Form = observer(({ name, sort }) => {
   const [form, setForm] = useState({ name: name, sort: sort });
   const router = useRouter();
 
+  const loadData = () => {
+    router.push(`/groups?sort=${form.sort}&name=${form.name}`);
+  };
+
   const onNameChange = (value) => {
     setForm({ ...form, name: value });
+    loadData();
   };
 
   const onSortChange = () => {
     const sort = form.sort === 'desc' ? 'asc' : 'desc';
 
     setForm({ ...form, sort });
-  };
-
-  const onSubmit = (event) => {
-    event.preventDefault();
-
-    router.push(`/groups?sort=${form.sort}&name=${form.name}`);
+    loadData();
   };
 
   return (
     <div className="groups-form">
-      <form onSubmit={onSubmit}>
+      <form>
         <input
           type="text"
           name="name"
@@ -37,7 +37,6 @@ const Form = observer(({ name, sort }) => {
         <button type="button" onClick={onSortChange}>
           {form.sort === 'desc' ? 'desc' : 'asc'}
         </button>
-        <button type="submit">Submit</button>
       </form>
     </div>
   );
