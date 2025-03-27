@@ -1,7 +1,6 @@
 'use server';
 
-import { getProfileInfo } from '@/actions/auth';
-import Button from './Button';
+import { getProfileInfo, logOut } from '@/actions/auth';
 
 async function Page() {
   const profile = await getProfileInfo();
@@ -21,7 +20,7 @@ async function Page() {
         <b>Отчество: </b>
         <span>{profile.patronymic}</span>
       </h3>
-      <Button>Logout</Button>
+      <button onClick={logOut}>Log Out</button>
     </div>
   );
 }

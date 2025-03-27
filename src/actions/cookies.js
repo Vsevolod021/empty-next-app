@@ -9,7 +9,7 @@ export async function setCookies(name, value, options = cookiesOptions) {
   return cookiesStorage.set({ name, value: JSON.stringify(value), ...options });
 }
 
-export async function getCookies() {
+export async function getTokensFromCookies() {
   const cookiesStorage = await cookies();
 
   try {

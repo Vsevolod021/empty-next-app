@@ -1,8 +1,8 @@
-import { getCookies } from '@/actions/cookies';
+import { getTokensFromCookies } from '@/actions/cookies';
 import { NextResponse } from 'next/server';
 
 export async function middleware(request) {
-  const cookies = await getCookies();
+  const cookies = await getTokensFromCookies();
 
   if (!cookies?.access) {
     const url = new URL('/auth', request.url);

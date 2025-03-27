@@ -2,8 +2,8 @@
 
 import authStore, { responseTypes, jsonHeaders, REFRESH_MAX_AGE } from '@/store/auth';
 import { refreshAccessToken, sessionExpired } from '@/actions/auth';
+import { getTokensFromCookies } from '@/actions/cookies';
 import { dateDifference } from '@/utils/helpers';
-import { getCookies } from '@/actions/cookies';
 import { apiEndpoint } from '@/config';
 import qs from 'qs';
 
@@ -13,7 +13,7 @@ export async function fetchData(url, params, responseType = responseTypes.JSON) 
   const headers = new Headers(isFormData ? {} : jsonHeaders);
   const body = isFormData ? params.body : JSON.stringify(params.body);
 
-  const cookiesData = await getCookies();
+  const cookiesData = await getTokensFromCookies();
   const authorization = cookiesData?.access;
 
   if (authorization) {

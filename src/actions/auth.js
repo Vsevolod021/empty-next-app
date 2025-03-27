@@ -1,6 +1,6 @@
 'use server';
 
-import { setCookies, deleteCookies, getCookies } from '@/actions/cookies';
+import { setCookies, deleteCookies, getTokensFromCookies } from '@/actions/cookies';
 import authStore, { jsonHeaders, cookiesOptions } from '@/store/auth';
 import { createUrlWithQueryParams, GET, POST } from '@/api/api';
 import { redirect } from 'next/navigation';
@@ -16,13 +16,17 @@ export async function setAuthorization(tokens) {
     return;
   }
 
+  const tokenData = await getTokensFromCookies();
+
+  if (!tokenData) return;
+
   await deleteCookies();
 }
 
 export async function refreshAccessToken() {
   const error = new Error('Ошибка при обновлении токена авторизации');
 
-  const tokens = await getCookies();
+  const tokens = await getTokensFromCookies();
 
   if (!tokens) throw error;
 
@@ -44,19 +48,20 @@ export async function refreshAccessToken() {
 
 export async function sessionExpired(doRedirect = false) {
   if (doRedirect) {
-    redirect('/logout');
+    redirect('/auth');
   }
 
   throw new Error('Время сессии истекло');
 }
 
 async function checkAccessToken() {
-  const tokens = await getCookies();
+  const tokens = await getTokensFromCookies();
 
   if (!tokens) {
     throw new Error('Ошибка при обновлении токена авторизации');
   }
 
+  // Подумать надо ли убрать
   const tokenData = jwtDecode(tokens.access);
   const tokenExpirationDate = new Date(tokenData.exp * 1000);
   const timeToTokenExporation = tokenExpirationDate.getTime() - new Date().getTime();
@@ -97,5 +102,5 @@ export async function logIn(data) {
 export async function logOut() {
   await setAuthorization(null);
 
-  return redirect('/logout');
+  return redirect('/auth');
 }

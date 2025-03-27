@@ -9,9 +9,9 @@ export const REFRESH_MAX_AGE = 25 * min;
 export const cookiesOptions = {
   httpOnly: true,
   secure: true,
-  maxAge: TOKEN_MAX_AGE,
   sameSite: 'none', // Не забыть поменять
-  path: '/'
+  path: '/',
+  maxAge: TOKEN_MAX_AGE
 };
 
 export const responseTypes = {
@@ -27,6 +27,12 @@ export const jsonHeaders = {
 
 class AuthStore {
   lastRefreshDate = new Date();
+  appLoaded = false;
+
+  setAppLoaded() {
+    this.appLoaded = true;
+    return this.appLoaded;
+  }
 
   setLastRefreshDate(date) {
     this.lastRefreshDate = date;
