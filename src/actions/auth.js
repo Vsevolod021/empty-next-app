@@ -4,7 +4,6 @@ import { setCookies, deleteCookies, getTokensFromCookies } from '@/actions/cooki
 import authStore, { jsonHeaders, cookiesOptions } from '@/store/auth';
 import { createUrlWithQueryParams, GET, POST } from '@/api/api';
 import { redirect } from 'next/navigation';
-import { jwtDecode } from 'jwt-decode';
 
 // token
 
@@ -61,15 +60,6 @@ async function checkAccessToken() {
     throw new Error('Ошибка при обновлении токена авторизации');
   }
 
-  // Подумать надо ли убрать
-  const tokenData = jwtDecode(tokens.access);
-  const tokenExpirationDate = new Date(tokenData.exp * 1000);
-  const timeToTokenExporation = tokenExpirationDate.getTime() - new Date().getTime();
-
-  if (timeToTokenExporation <= 0) {
-    return await sessionExpired(false);
-  }
-
   return await refreshAccessToken();
 }
 
@@ -77,9 +67,10 @@ async function checkAccessToken() {
 
 export async function checkAuthorized() {
   try {
-    return await checkAccessToken();
+    await checkAccessToken();
+    return true;
   } catch (err) {
-    return await logOut();
+    return null;
   }
 }
 
