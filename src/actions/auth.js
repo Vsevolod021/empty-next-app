@@ -4,6 +4,7 @@ import { setCookies, deleteCookies, getTokensFromCookies } from '@/actions/cooki
 import authStore, { jsonHeaders, cookiesOptions } from '@/store/auth';
 import { createUrlWithQueryParams, GET, POST } from '@/api/api';
 import { redirect } from 'next/navigation';
+import { validateForm } from './form';
 
 // token
 
@@ -82,10 +83,24 @@ export async function getProfileInfo() {
 }
 
 export async function logIn(data) {
-  const url = await createUrlWithQueryParams('/auth/');
-  const result = await POST(url, data);
+  const errors = await validateForm(data);
 
-  await setAuthorization(result);
+  if (errors.length !== 0) {
+    return errors;
+  }
+
+  const url = await createUrlWithQueryParams('/auth/');
+  const response = await POST(url, data);
+
+  if (response.detail) {
+    errors.push({ field: 'form', message: response.detail });
+  }
+
+  if (errors.length !== 0) {
+    return errors;
+  }
+
+  await setAuthorization(response);
 
   return redirect('/profile');
 }

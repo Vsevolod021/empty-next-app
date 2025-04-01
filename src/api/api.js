@@ -34,9 +34,11 @@ export async function fetchData(url, params, responseType = responseTypes.JSON) 
     const response = await fetch(url, request);
 
     if (response.status === 401) {
-      if (!url.pathname.includes('/auth')) {
-        return sessionExpired(true);
+      if (url.pathname.includes('/auth')) {
+        return response.json();
       }
+
+      return sessionExpired(true);
     }
 
     if (response.status === 500) {

@@ -30,9 +30,9 @@ export default function RootLayout({ children }) {
           <Link href="/" className="logo">
             <Image src={logo} alt="logo" width={40} height={40} />
           </Link>
-          <Link href="/profile">profile</Link>
-          <Link href="/groups">groups</Link>
-          <Link href="/auth">auth</Link>
+          <Link href="/profile">Профиль</Link>
+          <Link href="/groups">Группы</Link>
+          <Link href="/auth">Войти</Link>
         </div>
 
         {children}

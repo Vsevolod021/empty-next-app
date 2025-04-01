@@ -7,7 +7,7 @@ async function Page() {
 
   return (
     <div className="profile-page">
-      <h1>profile</h1>
+      <h1>Профиль</h1>
       <h3>
         <b>Имя: </b>
         <span>{profile.name}</span>
