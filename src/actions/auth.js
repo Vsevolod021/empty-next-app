@@ -83,26 +83,31 @@ export async function getProfileInfo() {
 }
 
 export async function logIn(data) {
-  const errors = await validateForm(data);
+  try {
+    const errors = await validateForm(data);
 
-  if (errors.length !== 0) {
-    return errors;
+    if (errors.length !== 0) {
+      return errors;
+    }
+
+    const url = await createUrlWithQueryParams('/auth/');
+    const response = await POST(url, data);
+
+    if (response.detail) {
+      errors.push({ field: 'form', message: response.detail });
+    }
+
+    if (errors.length !== 0) {
+      return errors;
+    }
+
+    await setAuthorization(response);
+
+    return [];
+  } catch (e) {
+    console.error(e);
+    return [{ field: 'form', message: e.message }];
   }
-
-  const url = await createUrlWithQueryParams('/auth/');
-  const response = await POST(url, data);
-
-  if (response.detail) {
-    errors.push({ field: 'form', message: response.detail });
-  }
-
-  if (errors.length !== 0) {
-    return errors;
-  }
-
-  await setAuthorization(response);
-
-  return redirect('/profile');
 }
 
 export async function logOut() {

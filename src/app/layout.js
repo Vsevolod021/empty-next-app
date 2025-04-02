@@ -27,12 +27,15 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <div className="header">
-          <Link href="/" className="logo">
+          <Link href="/" className="header__logo">
             <Image src={logo} alt="logo" width={40} height={40} />
           </Link>
+          <Link href="/users">Пользователи</Link>
           <Link href="/profile">Профиль</Link>
           <Link href="/groups">Группы</Link>
-          <Link href="/auth">Войти</Link>
+          <Link href="/auth" className="header__enter">
+            Войти
+          </Link>
         </div>
 
         {children}

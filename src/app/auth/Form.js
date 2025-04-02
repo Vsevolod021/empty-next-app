@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { observer } from 'mobx-react-lite';
 import { logIn } from '@/actions/auth';
 import { useState } from 'react';
@@ -10,6 +11,8 @@ const Form = observer(() => {
   const [form, setForm] = useState({ username: '', password: '' });
   const [errors, setErrors] = useState([]);
 
+  const router = useRouter();
+
   const formError = errors.find((error) => error.field === 'form')?.message;
 
   const inputError = (field) => errors.find((error) => error.field === field);
@@ -19,10 +22,16 @@ const Form = observer(() => {
     setErrors([]);
   };
 
-  const onSubmit = (event) => {
+  const onSubmit = async (event) => {
     event.preventDefault();
 
-    logIn(form).then(setErrors);
+    const errors = await logIn(form);
+
+    setErrors(errors);
+
+    if (errors.length === 0) {
+      router.push('/profile');
+    }
   };
 
   return (

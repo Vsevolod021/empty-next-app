@@ -13,5 +13,5 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ['/groups', '/profile']
+  matcher: ['/groups', '/profile', '/users']
 };

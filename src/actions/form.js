@@ -9,5 +9,11 @@ export async function validateForm(data) {
     }
   });
 
+  if (data.passwordRepeat) {
+    if (data.password !== data.passwordRepeat) {
+      errors.push({ field: 'passwordRepeat', message: 'Пароли не совпадают' });
+    }
+  }
+
   return errors;
 }
