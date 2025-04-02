@@ -1,11 +1,11 @@
 'use server';
 
-import Form from './Form';
+import AuthForm from './Form';
 
 async function Page() {
   return (
     <div className="auth-page">
-      <Form />
+      <AuthForm />
     </div>
   );
 }

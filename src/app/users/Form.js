@@ -2,9 +2,8 @@
 
 import { observer } from 'mobx-react-lite';
 import { createUser } from '@/api/users';
-import { useState } from 'react';
 
-import Input from '@/components/Input';
+import Form from '@/components/Form';
 
 const formTemplate = {
   username: '',
@@ -15,82 +14,26 @@ const formTemplate = {
   patronymic: ''
 };
 
-const Form = observer(() => {
-  const [form, setForm] = useState(formTemplate);
-  const [errors, setErrors] = useState([]);
-
-  const formError = errors.find((error) => error.field === 'form')?.message;
-
-  const inputError = (field) => errors.find((error) => error.field === field);
-
-  const onFormChange = (field, value) => {
-    setForm({ ...form, [field]: value });
-    setErrors([]);
-  };
-
-  const onSubmit = async (event) => {
-    event.preventDefault();
-
-    const errors = await createUser(form);
-    setErrors(errors);
-
-    if (errors.length === 0) {
-      alert('Пользователь успешно создан');
-      setForm(formTemplate);
-    }
-  };
+const UsersForm = observer(() => {
+  const onSubmitSuccess = () => alert('Пользователь успешно создан');
 
   return (
-    <form onSubmit={onSubmit} className="users-page__form">
-      <Input
-        type="text"
-        name="surname"
-        placeholder="Фамилия"
-        value={form.surname}
-        onChange={(e) => onFormChange(e.target.name, e.target.value)}
-        error={inputError('surname')}
-      />
-      <Input
-        name="name"
-        placeholder="Имя"
-        value={form.name}
-        onChange={(e) => onFormChange(e.target.name, e.target.value)}
-        error={inputError('name')}
-      />
-      <Input
-        name="patronymic"
-        placeholder="Отчество"
-        value={form.patronymic}
-        onChange={(e) => onFormChange(e.target.name, e.target.value)}
-        error={inputError('patronymic')}
-      />
-      <Input
-        name="username"
-        placeholder="Логин"
-        value={form.username}
-        onChange={(e) => onFormChange(e.target.name, e.target.value)}
-        error={inputError('username')}
-      />
-      <Input
-        type="password"
-        name="password"
-        placeholder="Пароль"
-        value={form.password}
-        onChange={(e) => onFormChange(e.target.name, e.target.value)}
-        error={inputError('password')}
-      />
-      <Input
-        type="password"
-        name="passwordRepeat"
-        placeholder="Повторите пароль"
-        value={form.passwordRepeat}
-        onChange={(e) => onFormChange(e.target.name, e.target.value)}
-        error={inputError('passwordRepeat')}
-      />
-      <div className="auth-page__form-error">{formError ?? ''}</div>
-      <button type="submit">Создать пользователя</button>
-    </form>
+    <Form
+      className="users-page__form"
+      onSubmitSuccess={onSubmitSuccess}
+      formTemplate={formTemplate}
+      action={createUser}
+    >
+      <Form.Input placeholder="Фамилия" name="surname" />
+      <Form.Input placeholder="Имя" name="name" />
+      <Form.Input placeholder="Отчество" name="patronymic" />
+      <Form.Input placeholder="Логин" name="username" />
+      <Form.Input placeholder="Пароль" name="password" type="password" />
+      <Form.Input placeholder="Повтор пароля" name="passwordRepeat" type="password" />
+
+      <Form.Submit>Создать пользователя</Form.Submit>
+    </Form>
   );
 });
 
-export default Form;
+export default UsersForm;
