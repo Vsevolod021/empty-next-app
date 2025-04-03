@@ -25,21 +25,22 @@ const Form = observer(({ name, sort }) => {
   };
 
   return (
-    <div className="groups-form">
-      <form onSubmit={loadData}>
-        <input
-          type="text"
-          name="name"
-          placeholder="Введите Группу"
-          onChange={(e) => onNameChange(e.target.value)}
-          value={form.name}
-        />
-        <button type="button" onClick={onSortChange}>
-          {form.sort === 'desc' ? 'desc' : 'asc'}
-        </button>
-        <button type="submit">Применить изменения</button>
-      </form>
-    </div>
+    <form className="groups-form" onSubmit={loadData}>
+      <input
+        onChange={(e) => onNameChange(e.target.value)}
+        value={form.name}
+        className="groups-form__input"
+        placeholder="Введите Группу"
+        type="text"
+        name="name"
+      />
+      <button type="button" onClick={onSortChange} className="groups-form__sort">
+        {form.sort === 'desc' ? 'А-я' : 'Я-а'}
+      </button>
+      <button type="submit" className="groups-form__submit">
+        Применить
+      </button>
+    </form>
   );
 });
 

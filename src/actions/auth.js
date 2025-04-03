@@ -93,10 +93,6 @@ export async function logIn(data) {
     const url = await createUrlWithQueryParams('/auth/');
     const response = await POST(url, data);
 
-    if (response.detail) {
-      errors.push({ field: 'form', message: response.detail });
-    }
-
     if (errors.length !== 0) {
       return errors;
     }
@@ -105,8 +101,7 @@ export async function logIn(data) {
 
     return [];
   } catch (e) {
-    console.error(e);
-    return [{ field: 'form', message: e.message }];
+    return [{ field: 'form', message: e.data.detail }];
   }
 }
 

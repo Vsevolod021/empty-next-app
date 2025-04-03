@@ -1,6 +1,10 @@
+'use client';
+
 import React, { useState } from 'react';
 
-// form
+/* 
+  Form
+*/
 const Form = ({ formTemplate, action, onSubmitSuccess, className = '', children }) => {
   const [form, setForm] = useState(formTemplate);
   const [errors, setErrors] = useState([]);
@@ -36,7 +40,9 @@ const Form = ({ formTemplate, action, onSubmitSuccess, className = '', children 
   );
 };
 
-// Input
+/* 
+  Input
+*/
 Form.Input = ({
   className = '',
   type = 'text',
@@ -45,31 +51,39 @@ Form.Input = ({
   inputError,
   form,
   name
-}) => (
-  <div className={`input ${className}`}>
-    <input
-      className="input__input"
-      type={type}
-      name={name}
-      placeholder={placeholder}
-      onChange={(e) => onFormChange(e.target.name, e.target.value)}
-      value={form[name]}
-    />
-    <p className="input__error">{inputError(name)?.message ?? ''}</p>
-  </div>
-);
+}) => {
+  const error = inputError(name)?.message;
 
-// Submit
-Form.Submit = ({ className = '', formError, children }) => {
   return (
-    <div className={`form-submit ${className}`}>
-      <div className="form-submit__error">{formError ?? ''}</div>
-      <button className="form-submit__button" type="submit">
-        {children}
-      </button>
+    <div className={`form-input ${className}`}>
+      <input
+        className="form-input__input"
+        type={type}
+        name={name}
+        placeholder={placeholder}
+        onChange={(e) => onFormChange(e.target.name, e.target.value)}
+        value={form[name]}
+      />
+      <p className={`form-input__error ${error ? 'form-input__error--active' : ''}`}>
+        {error ?? ''}
+      </p>
     </div>
   );
 };
+
+/* 
+  Submit
+*/
+Form.Submit = ({ className = '', formError, children }) => (
+  <div className={`form-submit ${className}`}>
+    <div className={`form-submit__error ${formError ? 'form-submit__error--active' : ''}`}>
+      {formError ?? ''}
+    </div>
+    <button className="form-submit__button" type="submit">
+      {children}
+    </button>
+  </div>
+);
 
 Form.Submit.displayName = 'FormSubmit';
 Form.Input.displayName = 'FormInput';

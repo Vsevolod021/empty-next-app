@@ -1,0 +1,62 @@
+.form
+  display: flex 
+  align-items: center
+  justify-content: center
+  flex-direction: column
+  gap: 30px
+  &-input 
+    position: relative
+    &__input 
+      position: relative
+      z-index: 4
+      width: 450px
+      height: 50px
+      border-radius: 5px
+      border: 2px solid #0000007e
+      padding: 0 20px
+      font-size: 16px
+      &::placeholder
+        color: #000000b7
+    &__error
+      top: 40px 
+      position: absolute
+      z-index: 3
+      color: red
+      margin: 0
+      opacity: 0
+      transition: 500ms ease-in-out
+      &--active
+        opacity: 1
+        transform: translateY(15px)
+
+  &-submit 
+    position: relative
+    width: 100%
+    display: flex
+    align-items: center
+    justify-content: center
+    &__error
+      top: 0
+      position: absolute
+      width: 100%
+      text-align: center
+      color: red
+      margin: 0
+      opacity: 0
+      transition: 300ms ease-in-out
+      &--active
+        opacity: 1
+
+    &__button
+      display: block
+      margin-top: 30px
+      width: 200px
+      height: 40px
+      background-color: transparent 
+      border: 2px solid #0000007e
+      color: #000000b7
+      cursor: pointer
+      border-radius: 5px
+      &:hover 
+        color: white 
+        background-color: #000000b7
