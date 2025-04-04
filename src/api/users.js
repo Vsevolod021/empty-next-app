@@ -16,6 +16,6 @@ export async function createUser(data) {
 
     return [];
   } catch (e) {
-    return [{ field: 'form', message: e.data.detail }];
+    return [{ field: 'form', message: e.data }];
   }
 }

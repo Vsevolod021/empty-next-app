@@ -24,22 +24,3 @@ export const responseTypes = {
 export const jsonHeaders = {
   'Content-Type': 'application/json'
 };
-
-class AuthStore {
-  lastRefreshDate = new Date();
-  appLoaded = false;
-
-  setAppLoaded() {
-    this.appLoaded = true;
-    return this.appLoaded;
-  }
-
-  setLastRefreshDate(date) {
-    this.lastRefreshDate = date;
-    return this.lastRefreshDate;
-  }
-}
-
-const authStore = new AuthStore();
-
-export default authStore;

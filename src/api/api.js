@@ -1,10 +1,11 @@
 'use server';
 
-import authStore, { responseTypes, jsonHeaders, REFRESH_MAX_AGE } from '@/store/auth';
+import { responseTypes, jsonHeaders, REFRESH_MAX_AGE } from '@/lib/auth';
 import { refreshAccessToken, sessionExpired } from '@/actions/auth';
 import { getTokensFromCookies } from '@/actions/cookies';
 import { dateDifference } from '@/utils/helpers';
 import { apiEndpoint } from '@/config';
+import { jwtDecode } from 'jwt-decode';
 import qs from 'qs';
 
 export async function fetchData(url, params, responseType = responseTypes.JSON) {
@@ -14,16 +15,19 @@ export async function fetchData(url, params, responseType = responseTypes.JSON) 
   const body = isFormData ? params.body : JSON.stringify(params.body);
 
   const cookiesData = await getTokensFromCookies();
-  const authorization = cookiesData?.access;
+  const accessToken = cookiesData?.access;
 
-  if (authorization) {
-    const timeFromLastRefresh = dateDifference(authStore.lastRefreshDate);
+  if (accessToken) {
+    const tokenData = jwtDecode(accessToken);
+    const tokenIssuedTime = new Date(tokenData.iat * 1000);
+
+    const timeFromLastRefresh = dateDifference(tokenIssuedTime);
 
     if (timeFromLastRefresh >= REFRESH_MAX_AGE) {
       await refreshAccessToken();
     }
 
-    headers.append('Authorization', `Bearer ${authorization}`);
+    headers.append('Authorization', `Bearer ${accessToken}`);
   }
 
   const timeoutDuration = params.method.toUpperCase() === 'GET' ? 30000 : 180000;
@@ -49,7 +53,9 @@ export async function fetchData(url, params, responseType = responseTypes.JSON) 
 
     if (!response.ok) {
       const error = new Error('Ошибка запроса');
-      error.data = await response.json();
+      const response = await response.json();
+
+      error.data = response.detail;
 
       throw error;
     }

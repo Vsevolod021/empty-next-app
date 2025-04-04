@@ -1,16 +1,14 @@
 'use server';
 
 import { setCookies, deleteCookies, getTokensFromCookies } from '@/actions/cookies';
-import authStore, { jsonHeaders, cookiesOptions } from '@/store/auth';
 import { createUrlWithQueryParams, GET, POST } from '@/api/api';
+import { jsonHeaders, cookiesOptions } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { validateForm } from './form';
 
 // token
 
 export async function setAuthorization(tokens) {
-  authStore.setLastRefreshDate(new Date());
-
   if (tokens) {
     await setCookies('tokens', tokens, cookiesOptions);
     return;
@@ -101,7 +99,7 @@ export async function logIn(data) {
 
     return [];
   } catch (e) {
-    return [{ field: 'form', message: e.data.detail }];
+    return [{ field: 'form', message: e.data }];
   }
 }
 

@@ -1,6 +1,6 @@
 'use server';
 
-import { cookiesOptions } from '@/store/auth';
+import { cookiesOptions } from '@/lib/auth';
 import { cookies } from 'next/headers';
 
 export async function setCookies(name, value, options = cookiesOptions) {
