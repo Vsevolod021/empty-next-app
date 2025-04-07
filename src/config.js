@@ -1,3 +1,4 @@
-export const backendUrl = 'https://admin-neoacademy.myhart.space';
+// ссылка на стейдж рабочего проекта
+// export const backendUrl = ''
 
-export const apiEndpoint = `${backendUrl}/api/v1`;
+// export const apiEndpoint = `${backendUrl}/api/v1`;
